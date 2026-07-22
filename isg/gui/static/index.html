@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infinite Storage Glitch</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23060907'/%3E%3Crect x='4' y='4' width='6' height='6' fill='%23dfffe9'/%3E%3Crect x='16' y='4' width='6' height='6' fill='%233dff88'/%3E%3Crect x='10' y='10' width='6' height='6' fill='%23dfffe9'/%3E%3Crect x='22' y='10' width='6' height='6' fill='%23dfffe9'/%3E%3Crect x='4' y='16' width='6' height='6' fill='%23dfffe9'/%3E%3Crect x='16' y='16' width='6' height='6' fill='%2322d3ee'/%3E%3Crect x='10' y='22' width='6' height='6' fill='%23dfffe9'/%3E%3Crect x='22' y='22' width='6' height='6' fill='%23dfffe9'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<input type="file" id="file-encode" hidden>
+<input type="file" id="file-decode" hidden accept="video/*">
+<input type="file" id="file-stress" hidden accept="video/*">
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <canvas id="logo" width="40" height="40" aria-hidden="true"></canvas>
+  <div>
+    <div class="brand">INFINITE_STORAGE_GLITCH<span class="cursor">▊</span></div>
+    <div class="brand-sub">any file → compression-proof video → youtube → forever</div>
+  </div>
+  <div class="spacer"></div>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="encode"><span class="key">[1]</span>ENCODE</button>
+    <button class="tab" data-tab="decode"><span class="key">[2]</span>DECODE</button>
+    <button class="tab" data-tab="stress"><span class="key">[3]</span>STRESS</button>
+  </nav>
+</header>
+
+<!-- ============ STAGE ============ -->
+<div class="stage">
+<div class="stage-inner">
+
+  <!-- ============ ENCODE ============ -->
+  <section class="panel" id="panel-encode" data-screen-label="Encode">
+    <div class="cmd">$ isg embed --interactive</div>
+    <h1>ENCODE<span class="accent">_</span></h1>
+    <p class="blurb">draws every bit as an 8×8 black/white block, armors it with reed–solomon, and writes a video youtube can't kill.</p>
+
+    <div class="drop" id="drop-encode" tabindex="0" role="button">
+      <div class="drop-main">[ DROP ANY FILE ]</div>
+      <div class="drop-sub">or click to browse — it becomes a noise video that survives youtube</div>
+    </div>
+    <div class="chip hidden" id="chip-encode">
+      <span class="chip-mark">▣</span>
+      <span class="fc-name"></span><span class="fc-size"></span>
+      <div class="spacer"></div>
+      <button class="fc-x">✕ REMOVE</button>
+    </div>
+
+    <div class="opts">
+      <div class="opt">
+        <div class="opt-label">BLOCK SIZE</div>
+        <div class="seg" id="seg-block">
+          <button data-v="8" class="active"><b>8 px</b><small>~47 KB/s · standard</small></button>
+          <button data-v="16"><b>16 px</b><small>~12 KB/s · paranoid</small></button>
+        </div>
+      </div>
+      <div class="opt">
+        <div class="opt-label">RESOLUTION</div>
+        <div class="seg" id="seg-res">
+          <button data-v="1280x720" class="active"><b>720p</b><small>1× capacity</small></button>
+          <button data-v="1920x1080"><b>1080p</b><small>2.25× capacity</small></button>
+        </div>
+      </div>
+      <div class="opt wide">
+        <div class="opt-label">ENCRYPTION — AES-256-GCM · SCRYPT KEY DERIVATION</div>
+        <div class="pwrow">
+          <input type="password" id="pw-encode" placeholder="optional password — leave empty for plaintext" autocomplete="new-password">
+          <button class="pw-eye" data-for="pw-encode">SHOW</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="bigbtn" id="btn-encode" disabled>▶ ENCODE TO VIDEO</button>
+    <div class="error hidden" id="err-encode"></div>
+    <div class="result hidden" id="res-encode"></div>
+  </section>
+
+  <!-- ============ DECODE ============ -->
+  <section class="panel hidden" id="panel-decode" data-screen-label="Decode">
+    <div class="cmd">$ isg extract --interactive</div>
+    <h1>DECODE<span class="accent">_</span></h1>
+    <p class="blurb">works on the original video or the youtube-downloaded copy. fully self-bootstrapping — zero configuration.</p>
+
+    <div class="drop" id="drop-decode" tabindex="0" role="button">
+      <div class="drop-main">[ DROP AN ISG VIDEO ]</div>
+      <div class="drop-sub">or click to browse — recovers the exact original file, bit for bit</div>
+    </div>
+    <div class="chip hidden" id="chip-decode">
+      <span class="chip-mark">▣</span>
+      <span class="fc-name"></span><span class="fc-size"></span>
+      <div class="spacer"></div>
+      <button class="fc-x">✕ REMOVE</button>
+    </div>
+
+    <div class="opt" style="margin-top:26px">
+      <div class="opt-label">PASSWORD — ONLY IF THE VIDEO WAS ENCRYPTED</div>
+      <div class="pwrow">
+        <input type="password" id="pw-decode" placeholder="wrong password is detected reliably (GCM auth)" autocomplete="off">
+        <button class="pw-eye" data-for="pw-decode">SHOW</button>
+      </div>
+    </div>
+
+    <button class="bigbtn" id="btn-decode" disabled>▶ RECOVER FILE</button>
+    <div class="error hidden" id="err-decode"></div>
+    <div class="result hidden" id="res-decode"></div>
+  </section>
+
+  <!-- ============ STRESS ============ -->
+  <section class="panel hidden" id="panel-stress" data-screen-label="Stress test">
+    <div class="cmd" id="stress-cmd">$ isg simulate --bitrate 2M</div>
+    <h1>STRESS TEST<span class="accent">_</span></h1>
+    <p class="blurb">prove it survives youtube without uploading: crush the video with the same lossy compression youtube applies, then try to get the data back.</p>
+
+    <button class="lastchip hidden" id="use-last"><span class="dot">●</span>use last encoded video: <b class="lc-name"></b></button>
+
+    <div class="drop compact" id="drop-stress" tabindex="0" role="button">
+      <div class="drop-main small">[ DROP AN ISG VIDEO ]</div>
+    </div>
+    <div class="chip hidden" id="chip-stress">
+      <span class="chip-mark">▣</span>
+      <span class="fc-name"></span><span class="fc-size"></span>
+      <div class="spacer"></div>
+      <button class="fc-x">✕ REMOVE</button>
+    </div>
+
+    <div class="opt" style="margin-top:26px">
+      <div class="opt-label">COMPRESSION SEVERITY</div>
+      <div class="seg four" id="seg-bitrate">
+        <button data-v="4M"><b>GENTLE</b><small>4 Mbps</small></button>
+        <button data-v="2M" class="active"><b>YOUTUBE</b><small>2 Mbps</small></button>
+        <button data-v="1500k"><b>HARSH</b><small>1.5 Mbps</small></button>
+        <button data-v="1M"><b>BRUTAL</b><small>1 Mbps</small></button>
+      </div>
+    </div>
+
+    <button class="bigbtn" id="btn-stress" disabled>▶ CRUSH IT &amp; TRY TO RECOVER</button>
+    <div class="error hidden" id="err-stress"></div>
+    <div class="result hidden" id="res-stress"></div>
+  </section>
+
+</div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footbar">
+  <span>720p ≈ 2.8 MB/min · 1080p ≈ 6.4 MB/min</span>
+  <span>RS(255,223) · corrects 16 bytes/codeword</span>
+  <div class="spacer"></div>
+  <span class="hint">keys: [1] [2] [3] switch mode · [esc] dismiss</span>
+  <button class="linkbtn" id="open-folder">OPEN OUTPUT FOLDER</button>
+</footer>
+
+<!-- ============ JOB OVERLAY ============ -->
+<div class="overlay hidden" id="overlay">
+  <div class="ov-box">
+    <div class="ov-head">
+      <div>
+        <div class="ov-title" id="ov-title">ENCODING</div>
+        <div class="ov-phase"><span id="ov-phase"></span><span class="cursor">▊</span></div>
+      </div>
+      <div class="ov-pct" id="ov-pct">0%</div>
+    </div>
+    <canvas id="viz" width="848" height="336"></canvas>
+    <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+    <div class="ov-abort"><button id="btn-abort">✕ DISMISS [ESC]</button></div>
+  </div>
+</div>
+
+<!-- ============ CRT OVERLAYS ============ -->
+<div class="vignette"></div>
+<div class="scanlines"></div>
+<div class="flicker"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
